@@ -150,8 +150,8 @@ if submitted:
     st.write(f"Your estimated admission chances are **{prediction*100:.2f}%**")
     
     # Display images with some style
-    st.image("Loss_Curve.png", caption="Loss Curve", use_column_width=True)
-    st.image("gpA.png", caption="CGPA vs Admission", use_column_width=True)
+    st.image("Loss_Curve.png", caption="Loss Curve", use_container_width=True)
+    st.image("gpA.png", caption="CGPA vs Admission", use_container_width=True)
 
 
 # Provide additional information about the model
