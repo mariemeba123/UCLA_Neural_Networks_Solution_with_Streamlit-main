@@ -147,11 +147,17 @@ if submitted:
     prediction = model.predict(input_data)[0]
     
     st.subheader("Prediction Result:")
-    st.write(f"Your estimated admission chances are **{prediction*100:.2f}%**")
+
+    if prediction==1:
+        st.success(f"You are admissible")
+    elif prediction==0:
+        st.error(f"Sorry You are not admissible")
+    else:
+        st.error(f"Sorry You are not admissible")
     
     # Display images with some style
-    st.image("Loss_Curve.png", caption="Loss Curve", use_container_width=True)
-    st.image("gpA.png", caption="CGPA vs Admission", use_container_width=True)
+    st.image("Loss_Curve.png", caption="Loss Curve")
+    st.image("gpA.png", caption="CGPA vs Admission")
 
 
 # Provide additional information about the model
