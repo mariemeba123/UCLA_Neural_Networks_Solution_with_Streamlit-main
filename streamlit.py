@@ -6,9 +6,15 @@ import matplotlib.pyplot as plt
 
 # Load the MLP model
 model_path = "models/MLPmodel.pkl"
-with open(model_path, "rb") as file:
-    model = pickle.load(file)
-
+try:
+    with open(model_path, "rb") as file:
+        model = pickle.load(file)
+except FileNotFoundError:
+    st.error("Model file not found. Please ensure 'models/MLPmodel.pkl' exists.")
+    st.stop()
+except Exception as e:
+    st.error(f"An error occurred while loading the model: {e}")
+    st.stop()
 # Load the dataset
 csv_path = "data/processed/Processed_Admission_Dataset.csv"
 df = pd.read_csv(csv_path)
@@ -131,33 +137,36 @@ with st.form("prediction_form"):
 
 # When form is submitted, show the prediction result
 if submitted:
-    # Convert values into model format
-    University_Rating_1 = 1 if University_Rating == 1 else 0
-    University_Rating_2 = 1 if University_Rating == 2 else 0
-    University_Rating_3 = 1 if University_Rating == 3 else 0
-    University_Rating_4 = 1 if University_Rating == 4 else 0
-    University_Rating_5 = 1 if University_Rating == 5 else 0
-    Research_0 = 1 if Research == "No" else 0
-    Research_1 = 1 if Research == "Yes" else 0
-    
-    input_data = [[GRE_Score, TOEFL_Score, SOP, LOR, CGPA,
-                   University_Rating_1, University_Rating_2, University_Rating_3,
-                   University_Rating_4, University_Rating_5, Research_0, Research_1]]
-    
-    prediction = model.predict(input_data)[0]
-    
-    st.subheader("Prediction Result:")
+    try:
+        # Convert values into model format
+        University_Rating_1 = 1 if University_Rating == 1 else 0
+        University_Rating_2 = 1 if University_Rating == 2 else 0
+        University_Rating_3 = 1 if University_Rating == 3 else 0
+        University_Rating_4 = 1 if University_Rating == 4 else 0
+        University_Rating_5 = 1 if University_Rating == 5 else 0
+        Research_0 = 1 if Research == "No" else 0
+        Research_1 = 1 if Research == "Yes" else 0
+        
+        input_data = [[GRE_Score, TOEFL_Score, SOP, LOR, CGPA,
+                    University_Rating_1, University_Rating_2, University_Rating_3,
+                    University_Rating_4, University_Rating_5, Research_0, Research_1]]
+        
+        prediction = model.predict(input_data)[0]
+        
+        st.subheader("Prediction Result:")
 
-    if prediction==1:
-        st.success(f"You are admissible")
-    elif prediction==0:
-        st.error(f"Sorry You are not admissible")
-    else:
-        st.error(f"Sorry You are not admissible")
-    
-    # Display images with some style
-    st.image("Loss_Curve.png", caption="Loss Curve")
-    st.image("gpA.png", caption="CGPA vs Admission")
+        if prediction==1:
+            st.success(f"Congratulations! You are eligible for admission.")
+        else:
+            st.error(f"Unfortunately, you are not eligible for admission.")
+        try:
+            # Display images with some style
+            st.image("Loss_Curve.png", caption="Loss Curve")
+            st.image("gpA.png", caption="CGPA vs Admission")
+        except FileNotFoundError:
+            st.warning("Loss Curve or GPA image not found.")
+    except Exception as e:
+        st.error(f"An error occurred during prediction: {e}")
 
 
 # Provide additional information about the model
